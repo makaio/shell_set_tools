@@ -1,0 +1,30 @@
+Occasionally I need to perform simple set operations on all of the lines within a group of files in *nix and I'm always annoyed that commands for this aren't built in.  Its not difficult to come up with a command to do it, but I don't use set operations enough to memorize the proper invocation of `sort`, `uniq`, and `comm`.  This package adds simple shell script wrappers to perform the set operations UNION, INTERSECT, and DIFFERENCE on 2 files.
+
+INSTALLATION
+Place the files somewhere in your $PATH, such as /usr/local/bin
+
+UNION
+The `union` command takes two or more file names as parameters and prints to standard output a list of all lines in any of the files.  Unlike, for example `cat`ing the files together, any given line appears only once in the output, regardless of how many times it appears in any of the source files.  Pass the -i flag to perform a case-insensitive comparison of the files.  Pass a single dash - in place of one of the file names to use standard input instead of a file.
+
+INTERSECT
+The `intersect` command takes exactly two files as parameters and prints to standard output a list of all lines in both of the files.  Any given line appears only once in the output, regardless of how many times it appears in any of the source files.  Pass the -i flag to perform a case-insensitive comparison of the files.  Pass a single dash - in place of one of the file names to use standard input instead of a file.
+
+DIFFERENCE
+The `difference` command takes exactly two files as parameters and prints to standard output a list of all lines that appear in file1 but not file2.  So, given the command `difference file1 file2`, this is the equivalent of the set operation "file1 MINUS file2".  Pass the -i flag to perform a case-insensitive comparison of the files.  Pass a single dash - in place of one of the file names to use standard input instead of a file.
+
+EXAMPLES
+> union file1 file2 file3
+# Prints file1 UNION file2 UNION file3
+
+> intersect -i file1 file2
+# Prints file1 INTERSECT file2, ignoring case in all comparisons.
+
+> difference file1 file2 > output.txt
+# Saves file1 MINUS file2 to output.txt
+
+> union file1 file2 | intersect - file3
+# Calculates ((file1 UNION file2) INTERSECT file3)
+
+
+OTHER NOTES
+The current implementation of `union`, `intersect`, and `difference` return lines in sorted order, but this may change in future implementations.
