@@ -1,0 +1,54 @@
+#!/bin/sh
+
+SORT=`which sort`
+UNIQ=`which uniq`
+COMM=`which comm`
+MKFIFO="mkfifo"
+MKTEMPDIR="mktemp -d -t intersect"
+RM="rm -f"
+RMDIR="rmdir"
+
+function usage() {
+	cat <<EOF
+Usage: $0 [-i] file1 file2
+Takes the intersection of file1 and file2
+EOF
+	exit 0
+}
+
+while getopts ":ih" opt; do
+	case $opt in
+
+	i ) UNIQOPTS="-i" && COMMOPTS="-i" ;;
+	h ) usage ;;
+	\?) usage ;;
+
+	esac
+done
+
+shift $(($OPTIND - 1))
+
+if [ $# -lt 2 ]; then
+	echo "Must specify at least 2 files"
+	usage
+fi
+
+if [ $# -gt 2 ]; then
+	echo "Only 2 files can be intersected currently"
+	usage
+fi
+
+TMPDIR=`$MKTEMPDIR` || exit 1
+FILE1="$TMPDIR/file1"
+FILE2="$TMPDIR/file2"
+
+$SORT "$1" | $UNIQ $UNIQUEOPTS > "$FILE1"
+$SORT "$2" | $UNIQ $UNIQUEOPTS > "$FILE2"
+
+$COMM $COMMOPTS -12 "$FILE1" "$FILE2"
+
+$RM "$FILE1"
+$RM "$FILE2"
+$RMDIR "$TMPDIR"
+
+# $SORT "$@" | $UNIQ $UNIQUEOPTS
