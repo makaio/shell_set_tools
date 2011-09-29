@@ -1,0 +1,30 @@
+#!/bin/sh
+
+SORT=`which sort`
+UNIQ=`which uniq`
+
+function usage() {
+	cat <<EOF
+Usage: $0 [-i] file1 file2 .. [file n]
+EOF
+	exit 0
+}
+
+while getopts ":ih" opt; do
+	case $opt in
+
+	i ) UNIQOPTS="-i" ;;
+	h ) usage ;;
+	\?) usage ;;
+
+	esac
+done
+
+shift $(($OPTIND - 1))
+
+if [ $# -lt 2 ]; then
+	echo "Must specify at least 2 files"
+	usage
+fi
+
+$SORT "$@" | $UNIQ $UNIQUEOPTS
